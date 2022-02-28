@@ -15,36 +15,37 @@ exports.getTours = async (req, res) => {
 
 		let queryStr = JSON.stringify(queryObj);
 		queryStr = queryStr.replace(/\b(gte|gt|lte|lt)\b/g, match => `$${match}`);
+		console.log(JSON.parse(queryStr));
 
 		let query = Tour.find(JSON.parse(queryStr));
 		
 		// SORTING
-		if(req.params.sort) {
-			const sb = req.query.sort.split(',').join(' ');
-			query = query.sortBy(sb);
-		} else {
-			query = query.sortBy('-createdAt');
-		}
+		// if(req.params.sort) {
+		// 	const sb = req.query.sort.split(',').join(' ');
+		// 	query = query.sortBy(sb);
+		// } else {
+		// 	query = query.sortBy('-createdAt');
+		// }
 
-		// FIELDS LIMITING
-		if(req.params.fields) {
-			const fieldsSelected = req.query.fields.split(',').join(' ');
-			query = query.select(fieldsSelected);
-		} else {
-			query = query.select('-__v');
-		}
+		// // FIELDS LIMITING
+		// if(req.params.fields) {
+		// 	const fieldsSelected = req.query.fields.split(',').join(' ');
+		// 	query = query.select(fieldsSelected);
+		// } else {
+		// 	query = query.select('-__v');
+		// }
 
-		// PAGINATION
-		const pageQuery = req.query.page * 1 || 1;
-		const limitQuery = req.query.limit * 1 || 100;
-		const skipQuery = (pageQuery - 1) * limitQuery;
+		// // PAGINATION
+		// const pageQuery = req.query.page * 1 || 1;
+		// const limitQuery = req.query.limit * 1 || 100;
+		// const skipQuery = (pageQuery - 1) * limitQuery;
 
-		query = query.skip(skipQuery).limit(limitQuery);
+		// query = query.skip(skipQuery).limit(limitQuery);
 
-		if(req.query.page) {
-			const numTours = await Tour.countDocuments();
-			if(skipQuery >= numTours) throw new Error('This page does not exit');
-		}
+		// if(req.query.page) {
+		// 	const numTours = await Tour.countDocuments();
+		// 	if(skipQuery >= numTours) throw new Error('This page does not exit');
+		// }
 
 		const tours = await query;
 
